@@ -41,8 +41,7 @@ public class VerificationController {
 			user = optionalUser.get();
 		}
 //verificationExpiryTimeRepo.findById(1L).get().getLinkExpiryTime()
-		if (System.currentTimeMillis() - user.getRegisterTime() > verificationExpiryTimeRepo.findById(1L).get()
-				.getLinkExpiryTime()) {
+		if (System.currentTimeMillis() - user.getRegisterTime() > 3600000) {
 
 			return new ResponseEntity<>("Link is expire.", HttpStatus.GONE);
 		}
