@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class User {
 
@@ -15,10 +17,28 @@ public class User {
 	private String emailId;
 	private Long mobileNumber;
 	private String password;
+	@JsonProperty
+	private boolean isAdmin;
 	private Long registerTime;
+	private int wrongAttemptCount;
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", address=" + address + ", emailId=" + emailId + ", mobileNumber="
+				+ mobileNumber + ", password=" + password + ", registerTime=" + registerTime + ", wrongAttemptCount="
+				+ wrongAttemptCount + ", isAdmin=" + isAdmin + "]";
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
 	public User(Long id, String name, String address, String emailId, Long mobileNumber, String password,
-			Long registerTime) {
+			Long registerTime, int wrongAttemptCount, boolean isAdmin) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -27,17 +47,21 @@ public class User {
 		this.mobileNumber = mobileNumber;
 		this.password = password;
 		this.registerTime = registerTime;
+		this.wrongAttemptCount = wrongAttemptCount;
+		this.isAdmin = isAdmin;
+	}
+
+	public int getWrongAttemptCount() {
+		return wrongAttemptCount;
+	}
+
+	public void setWrongAttemptCount(int wrongAttemptCount) {
+		this.wrongAttemptCount = wrongAttemptCount;
 	}
 
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", address=" + address + ", emailId=" + emailId + ", mobileNumber="
-				+ mobileNumber + ", password=" + password + ", registerTime=" + registerTime + "]";
 	}
 
 	public Long getId() {

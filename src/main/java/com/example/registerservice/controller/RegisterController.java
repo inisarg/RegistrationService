@@ -29,10 +29,11 @@ public class RegisterController {
 
 		if (registerService.findUserByEmail(user.getEmailId())) {
 			System.out.println("this emailid taken....");
-			return new ResponseEntity<>("this email id is already taken!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("this email id is already taken!", HttpStatus.CONFLICT);
 
 		}
 		user.setRegisterTime(System.currentTimeMillis());
+		user.setWrongAttemptCount(0);
 
 		user = registerService.registerUser(user);
 

@@ -8,4 +8,6 @@ import com.example.registerservice.entity.User;
 
 public interface UserRepo extends JpaRepository<User, Long> {
 	Optional<User> findByEmailId(String email);
+
+	Optional<User> findByEmailIdAndPassword(String emailId, String password);
 }

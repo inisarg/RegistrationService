@@ -19,10 +19,7 @@ public class VerificationService {
 	VerifiedUserRepo verifiedUserRepo;
 
 	public boolean makeVerifiedUser(Long id) {
-
-		Optional<User> usr = userRepo.findById(id);
-		Optional<VerifiedUser> vr_user = verifiedUserRepo.findByUser(usr.get());
-
+		Optional<VerifiedUser> vr_user = getVerifiedUserFromUserId(id);
 		if (vr_user.isPresent()) {
 			VerifiedUser verifiedUser = vr_user.get();
 
@@ -31,6 +28,26 @@ public class VerificationService {
 
 			verifiedUserRepo.save(verifiedUser);
 			return true;
+		}
+		return false;
+	}
+
+	public Optional<VerifiedUser> getVerifiedUserFromUserId(Long id) {
+		Optional<User> usr = userRepo.findById(id);
+		Optional<VerifiedUser> vr_user = verifiedUserRepo.findByUser(usr.get());
+		return vr_user;
+	}
+
+	public boolean checkVerifiedUserFromEmailId(String emailId) {
+		Optional<User> optUsr = userRepo.findByEmailId(emailId);
+		if (optUsr.isPresent()) {
+			Optional<VerifiedUser> optVrfyuser = verifiedUserRepo.findByUser(optUsr.get());
+			if (optVrfyuser.isPresent()) {
+
+				if (optVrfyuser.get().isEmailVerified()) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

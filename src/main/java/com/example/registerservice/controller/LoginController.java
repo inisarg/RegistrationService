@@ -1,6 +1,7 @@
 package com.example.registerservice.controller;
 
-import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import com.example.registerservice.entity.User;
 import com.example.registerservice.model.LoginModel;
 import com.example.registerservice.repo.UserRepo;
 import com.example.registerservice.repo.VerifiedUserRepo;
+import com.example.registerservice.service.VerificationService;
 
 @RestController
 @RequestMapping("/api")
@@ -27,17 +29,36 @@ public class LoginController {
 	@Autowired
 	VerifiedUserRepo verifiedUserRepo;
 
+	@Autowired
+	VerificationService verificationService;
+
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(@RequestBody LoginModel loginModel) throws Exception {
 
-		System.out.println(loginModel);
-		List<User> userList = userRepo.findAll();
-		for (User user : userList) {
-			if (loginModel.getEmail().equals(user.getEmailId())
-					&& loginModel.getPassword().equals(user.getPassword())) {
-				return new ResponseEntity<>("user login successfully.", HttpStatus.OK);
+		if (verificationService.checkVerifiedUserFromEmailId(loginModel.getEmail())) {
+			Optional<User> optUser = userRepo.findByEmailIdAndPassword(loginModel.getEmail(), loginModel.getPassword());
+			if (optUser.isPresent()) {
+				User usr = optUser.get();
+				usr.setWrongAttemptCount(0);
+				userRepo.save(usr);
+				return new ResponseEntity<>("user logdin successfully.", HttpStatus.OK);
+			} else {
+				//
+
+				User usr = userRepo.findByEmailId(loginModel.getEmail()).get();
+				int count = usr.getWrongAttemptCount();
+				if (count < 3) {
+					usr.setWrongAttemptCount(count + 1);
+					userRepo.save(usr);
+				} else if (count == 3) {
+					return new ResponseEntity<>("user is block, please contact admin", HttpStatus.LOCKED);
+
+				}
+				return new ResponseEntity<>("invalid emailid", HttpStatus.NOT_FOUND);
+
 			}
 		}
-		return new ResponseEntity<>("user not logdin successfully.", HttpStatus.UNAUTHORIZED);
+
+		return new ResponseEntity<>("user is not vaerified.", HttpStatus.UNAUTHORIZED);
 	}
 }
