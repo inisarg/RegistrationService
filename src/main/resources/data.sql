@@ -1,1 +1,1 @@
-insert into verfication_expiry_time values (1,60000,60000);
+INSERT INTO verfication_expiry_time(id,link_expiry_time,otp_expiry_time) VALUES(1,60000,60000);
